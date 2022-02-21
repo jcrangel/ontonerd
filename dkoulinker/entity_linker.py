@@ -1,3 +1,4 @@
+import pickle
 from typing import List,Dict
 
 
@@ -10,6 +11,7 @@ import numpy as np
 from dkoulinker.entity_ranking import EntityRanking
 from dkoulinker.utils import (_print_colorful_text, is_overlaping, log)
 from dkoulinker.tokenization import SegtokSentenceSplitter
+
 import pprint
 
 class EntityLinker:
@@ -413,3 +415,49 @@ def proc_flair_sentence(sentence):
         })
 
     return mentions,results
+
+
+def load_ontology_entity_linker():
+    """Load the default ontology entity linker.
+    """
+    from dkoulinker.entity_ranking import DictionaryRanking, QueryEntityRanking
+    import os
+    from flair.models import SequenceTagger
+
+    DATA_PATH = '/home/julio/repos/dkou_linker/'
+    # loading dicitonary of commonness,
+    print('Loading mention2pem dictionary ...')
+    handle = open(
+        os.path.join(DATA_PATH, 'data/pem/pem.pickle'), 'rb')
+    mention2pem = pickle.load(handle)
+
+    print('Loading entity description dictionary ...')
+    handle_desc = open(
+        os.path.join(DATA_PATH, 'data/pem/entity2description.pickle'), 'rb')
+    entity2description = pickle.load(handle_desc)
+    print('NUmber of entities: ', len(entity2description))
+
+    print('Loading dictionary of term frequency ...')
+    handle_desc = open(
+        os.path.join(DATA_PATH, 'data/pem/mention_freq.pickle'), 'rb')
+    mention2freq = pickle.load(handle_desc)
+    print('Number of term in the collection: ', len(mention2freq))
+
+    # given by create_term_req
+    collection_size_terms = len(mention2pem)
+    tagger = SequenceTagger.load(
+        os.path.join(
+            DATA_PATH, 'resources/taggers/sota-ner-flair/best-model.pt'))
+    dictionarysearch_strategy = DictionaryRanking(mention2pem)
+    queryranking_strategy = QueryEntityRanking(
+        entity2description=entity2description,
+        mention_freq=mention2freq,
+        mention2pem=mention2pem
+    )
+    e_linker = EntityLinker(
+        ranking_strategy=queryranking_strategy,
+        ner_model=tagger,
+        mention2pem=mention2pem,
+        prune_overlapping_method='large_text'
+    )
+    return e_linker
