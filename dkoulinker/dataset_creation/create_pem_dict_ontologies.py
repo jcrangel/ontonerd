@@ -1,6 +1,4 @@
-#%%
-%load_ext autoreload
-%autoreload 2
+
 from re import T
 import sys
 

@@ -6,10 +6,9 @@ Entity linking for ontology terms aims to associate mention in text with a knowl
 Current Natural Language Processing (NLP) models for entity linking need training in annotated datasets. Such datasets are limited and costly to assemble (need domain expertise). To address this challenge, we propose to create such datasets by leveraging the information of ontologies, which is already curated by domain expertise.
 
 
-# Examples
+# Installation
 Install this library:
 ```
 pip install -e .
 ```
-
-And download the example data by `download_data.sh`
+Install requirements `requirements.txt` and download the example data by `download_data.sh` .
