@@ -7,4 +7,9 @@ Current Natural Language Processing (NLP) models for entity linking need trainin
 
 
 # Examples
-First execute `download_data.sh`
+Install this library:
+```
+pip install -e .
+```
+
+And download the example data by `download_data.sh`
